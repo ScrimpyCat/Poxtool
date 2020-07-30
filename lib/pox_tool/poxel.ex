@@ -23,4 +23,25 @@ defmodule PoxTool.Poxel do
         top: face
     }
     @type palette :: %{ colour => non_neg_integer }
+
+    @spec size(t) :: { width :: non_neg_integer, height :: non_neg_integer, depth :: non_neg_integer }
+    def size(%{ front: front, left: left }) do
+        { w, h } = face_size(front)
+        { d, ^h } = face_size(left)
+        { w, h, d }
+    end
+
+    @spec face_size(face) :: { width :: non_neg_integer, height :: non_neg_integer }
+    def face_size([]), do: { 0, 0 }
+    def face_size(face = [row|_]), do: { Enum.count(row), Enum.count(face) }
+
+
+    @spec face_map(face, any, (acc :: any -> any), (result :: any, acc :: any -> any), (acc :: any -> any), (chunk, acc :: any -> any)) :: any
+    def face_map(face, acc, row_init, row_merge, seg_init, seg_map) do
+        Enum.reduce(face, acc, fn row, acc ->
+            Enum.reduce(row, row_init.(acc), fn segment, acc ->
+                row_merge.(Enum.reduce(segment, seg_init.(acc), seg_map), acc)
+            end)
+        end)
+    end
 end
