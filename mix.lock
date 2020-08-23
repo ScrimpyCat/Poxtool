@@ -12,5 +12,5 @@
   "simple_markdown": {:hex, :simple_markdown, "0.7.0", "5fc78408958020360186285aa3726f2625134abe6686c8c9ea856c107c7bc056", [:mix], [{:html_entities, "~> 0.3", [hex: :html_entities, repo: "hexpm", optional: false]}, {:parsey, "~> 0.0.3", [hex: :parsey, repo: "hexpm", optional: false]}], "hexpm", "0ad688473788d9954c5129f14a71cb338ceb0d60e12d9bbe9d441e32217c0aa1"},
   "simple_markdown_extension_cli": {:hex, :simple_markdown_extension_cli, "0.1.4", "eae9833cdddb98f5c4534ebd4313ad8954ac555f001331c6d44bbf310210cbf9", [:mix], [{:simple_markdown, "~> 0.3", [hex: :simple_markdown, repo: "hexpm", optional: false]}], "hexpm", "53a63342a2e9fe346aea3dd33c9f7428d6a759356f8923e7f3260e2155ca3f4d"},
   "tonic": {:hex, :tonic, "0.2.2", "80d7e9c6ceaa35b016af701884a7b2cbcc0dab5285fed081dd11106e0aa44d93", [:mix], [], "hexpm", "5a085f550848045825acd9fac59fb84a8128bf8387ca47dfe8aa9579da9ac564"},
-  "vox": {:git, "https://github.com/ScrimpyCat/Vox.git", "ab6fe03bfe889c901db9bfe5da97d34518f046f7", []},
+  "vox": {:git, "https://github.com/ScrimpyCat/Vox.git", "5a9ebf0e6b0d1df6b68800d38d5fe69aafd9d3ef", []},
 }
