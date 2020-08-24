@@ -218,4 +218,16 @@ defmodule PoxTool do
 
         { palette, max_blocks, max_depth, Enum.reverse([Enum.reverse(row)|rows]) }
     end
+
+    defp exceeds_depth_limit?(faces, bits, nil), do: Enum.all?(0..7, &exceeds_depth_limit?(faces, bits, &1))
+    defp exceeds_depth_limit?([{ _, { _, segments, depth, _ } }|faces], 32, 0) when (segments <= 1) and (depth <= 0xffffff), do: exceeds_depth_limit?(faces, 32, 0)
+    defp exceeds_depth_limit?([{ _, { _, segments, depth, _ } }|faces], 32, 1) when (segments <= 3) and (depth <= 90), do: exceeds_depth_limit?(faces, 32, 1)
+    defp exceeds_depth_limit?([{ _, { _, segments, depth, _ } }|faces], 32, 2) when (segments <= 24) and (depth <= 24), do: exceeds_depth_limit?(faces, 32, 2)
+    # defp exceeds_depth_limit?([{ _, { _, segments, depth, _ } }|faces], 128, 0) when (segments <= 1) and (depth <= 0xffffff), do: exceeds_depth_limit?(faces, 128, 0)
+    # defp exceeds_depth_limit?([{ _, { _, segments, depth, _ } }|faces], 128, 1) when (segments <= 3) and (depth <= 90), do: exceeds_depth_limit?(faces, 128, 1)
+    # defp exceeds_depth_limit?([{ _, { _, segments, depth, _ } }|faces], 128, 2) when (segments <= 24) and (depth <= 24), do: exceeds_depth_limit?(faces, 128, 2)
+    defp exceeds_depth_limit?([], _, _), do: false
+    defp exceeds_depth_limit?(faces, bits, mode) when mode in [3, 4, 5], do: exceeds_depth_limit?(faces, bits, mode - 3)
+    defp exceeds_depth_limit?(_, _, mode) when mode in [6, 7], do: false
+    defp exceeds_depth_limit?(_, _, _), do: true
 end
