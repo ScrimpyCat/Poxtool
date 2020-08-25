@@ -219,6 +219,10 @@ defmodule PoxTool do
         { palette, max_blocks, max_depth, Enum.reverse([Enum.reverse(row)|rows]) }
     end
 
+    defp exceeds_palette_limit?([{ _, { palette, _, _, _ } }|_]) when map_size(palette) > 256, do: true
+    defp exceeds_palette_limit?([_|faces]), do: exceeds_palette_limit?(faces)
+    defp exceeds_palette_limit?([]), do: false
+
     defp exceeds_depth_limit?(faces, bits, nil), do: Enum.all?(0..7, &exceeds_depth_limit?(faces, bits, &1))
     defp exceeds_depth_limit?([{ _, { _, segments, depth, _ } }|faces], 32, 0) when (segments <= 1) and (depth <= 0xffffff), do: exceeds_depth_limit?(faces, 32, 0)
     defp exceeds_depth_limit?([{ _, { _, segments, depth, _ } }|faces], 32, 1) when (segments <= 3) and (depth <= 90), do: exceeds_depth_limit?(faces, 32, 1)
