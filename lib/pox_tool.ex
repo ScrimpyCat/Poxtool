@@ -219,6 +219,10 @@ defmodule PoxTool do
         { palette, max_blocks, max_depth, Enum.reverse([Enum.reverse(row)|rows]) }
     end
 
+    defp max_palettes(faces, merged \\ %{})
+    defp max_palettes([{ _, { palette, _, _, _ } }|faces], merged), do: max_palettes(faces, Map.merge(merged, palette))
+    defp max_palettes([], merged), do: map_size(merged)
+
     defp exceeds_palette_limit?([{ _, { palette, _, _, _ } }|_]) when map_size(palette) > 256, do: true
     defp exceeds_palette_limit?([_|faces]), do: exceeds_palette_limit?(faces)
     defp exceeds_palette_limit?([]), do: false
