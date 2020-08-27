@@ -219,6 +219,10 @@ defmodule PoxTool do
         { palette, max_blocks, max_depth, Enum.reverse([Enum.reverse(row)|rows]) }
     end
 
+    defp max_segments(faces, max \\ 0)
+    defp max_segments([{ _, { _, segments, _, _ } }|faces], max), do: max_segments(faces, max(max, segments))
+    defp max_segments([], max), do: max
+
     defp max_palettes(faces, merged \\ %{})
     defp max_palettes([{ _, { palette, _, _, _ } }|faces], merged), do: max_palettes(faces, Map.merge(merged, palette))
     defp max_palettes([], merged), do: map_size(merged)
