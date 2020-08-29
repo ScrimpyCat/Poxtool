@@ -160,8 +160,8 @@ defmodule PoxTool do
     defp pack_depth_blocks([{ { depth, length }, index, material }|segments], size, palette, { dacc, pacc }, n) when depth <= n do
         pack_depth_blocks([{ { depth + 1, length - 1 }, index, material }|segments], size, palette, { <<dacc :: bitstring, 1 :: size(1)>>, <<pacc :: bitstring, pack_palette_index(index, palette) :: bitstring>> }, n + 1)
     end
-    defp pack_depth_blocks(segments = [_|_], size, palette, acc, n) do
-        pack_depth_blocks(segments, size, palette, <<acc :: bitstring, 0 :: size(1)>>, n + 1)
+    defp pack_depth_blocks(segments = [_|_], size, palette, { dacc, pacc }, n) when n < size do
+        pack_depth_blocks(segments, size, palette, { <<dacc :: bitstring, 0 :: size(1)>>, <<pacc :: bitstring, pack_palette_index(0, palette) :: bitstring>> }, n + 1)
     end
     defp pack_depth_blocks([], size, palette, acc, _), do: acc
 
