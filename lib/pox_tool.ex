@@ -130,7 +130,7 @@ defmodule PoxTool do
                 { depth, colour } = pack_pixel(options.palette, segments, options.depth, size)
                 { _, size } = options.depth
 
-                { pad(depth, size), pad(colour, size) }
+                { pad(depth, size), pack_palette(colour, size) |> pad(size) }
             end)
         end)
 
@@ -165,9 +165,31 @@ defmodule PoxTool do
     end
     defp pack_depth_blocks([], size, palette, acc, _), do: acc
 
-    defp pack_palette_index(index, size) when index < size do
+    defp pack_palette_index(index, size) do
         bits = size |> Itsy.Bit.mask_lower_power_of_2 |> Itsy.Bit.count
         <<index :: size(bits)>>
+    end
+
+    defp pack_palette(palette, size) when bit_size(palette) < size, do: palette
+    defp pack_palette(palette, size) do
+        <<sequence :: bitstring-size(size), excess :: bitstring>> = palette
+        true = packed_palette_repeats?(sequence, excess) # TODO: throw custom exception
+
+        sequence
+    end
+
+    defp packed_palette_repeats?(sequence, palette) do
+        size = bit_size(sequence)
+        case palette do
+            <<^sequence :: bitstring-size(size), excess :: bitstring>> -> packed_palette_repeats?(sequence, excess)
+            palette when bit_size(palette) < bit_size(sequence) ->
+                size = bit_size(palette)
+                case sequence do
+                    <<^palette :: bitstring-size(size), _ :: bitstring>> -> true
+                    _ -> false
+                end
+            _ -> false
+        end
     end
 
     defp pad(bits, size, fill \\ 0) do
