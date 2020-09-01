@@ -165,7 +165,7 @@ defmodule PoxTool do
     end
     defp pack_depth_blocks([], size, palette, acc, _), do: acc
 
-    defp pack_palette_index(index, size) do
+    defp pack_palette_index(index, size) when index < size do
         bits = size |> Itsy.Bit.mask_lower_power_of_2 |> Itsy.Bit.count
         <<index :: size(bits)>>
     end
