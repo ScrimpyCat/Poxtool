@@ -24,7 +24,7 @@ defmodule PoxTool do
     def all_faces(value), do: [left: value, right: value, bottom: value, top: value, front: value, back: value]
 
     @spec pack(PoxTool.Poxel.t, keyword(PoxTool.Options.t)) :: [{ face, packed_face }]
-    def pack(poxel = %PoxTool.Poxel{}, opts \\ []), do: Map.from_struct(poxel) |> Enum.map(fn { name, face } -> { name, prepare_face(face) } end) |> pack_face([{ :size, PoxTool.Poxel.size(poxel) }|opts])
+    def pack(poxel = %PoxTool.Poxel{}, opts \\ []), do: Map.from_struct(poxel) |> Enum.map(fn { name, face } -> { name, prepare_face(face, opts[:palette] || %{}) } end) |> pack_face([{ :size, PoxTool.Poxel.size(poxel) }|opts])
 
     @tab "    "
     def save(packed_poxel, { width, height, depth }, path, palettes \\ []) do
