@@ -35,7 +35,16 @@ defmodule PoxTool.Poxel do
     def face_size([]), do: { 0, 0 }
     def face_size(face = [row|_]), do: { Enum.count(row), Enum.count(face) }
 
-    @spec face_palette(face) :: palette
+    @spec palette(t, map) :: palette
+    def palette(poxel, palette \\ %{}) do
+        poxel
+        |> Map.from_struct
+        |> Enum.reduce(%{}, fn { _, face }, palette ->
+            face_palette(face, palette)
+        end)
+    end
+
+    @spec face_palette(face, map) :: palette
     def face_palette(face, palette \\ %{}) do
         face_map(face, palette, &(&1), fn result, _ -> result end, &(&1), fn { _, colour, _ }, acc ->
             Map.put_new(acc, colour, map_size(acc))
