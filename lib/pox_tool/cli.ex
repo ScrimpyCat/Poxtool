@@ -16,7 +16,7 @@ defmodule PoxTool.CLI do
       * `--voxel`, `-v FILE` - Create from voxel input.
       * `--depth`, `-d PRECISION MODE` - Set the depth precision and mode. Defaults to finding the first usable size and mode.
       * `--depth-bits`, `-db PRECISION` - Set the depth precision. Defaults to finding the first usable size.
-      * `--depth-mode`, `-dm MODE` - Set the depth mode. Defaults to finding the first usable mode.
+      * `--depth-mode`, `-dm MODES` - Set the depth mode (comma separated list of numbers). Defaults to finding the first usable mode.
       * `--size`, `-s WIDTH HEIGHT DEPTH` - Set the size of the poxel data.
       * `--shared-palette`, `-sp BOOL` - Set whether the palette should be shared or not. Defaults to finding finding the best choice.
       * `--shared-depth`, `-sd BOOL` - Set whether the depth maps should be shared or not. Defaults to finding finding the best choice.
@@ -33,7 +33,7 @@ defmodule PoxTool.CLI do
     def create([cmd, file|args], opts) when cmd in ["-v", "--voxel"], do: create(args, [{ :source, { :voxel, file } }|opts])
     def create([cmd, precision, mode|args], opts) when cmd in ["-d", "--depth"], do: create(args, [{ :depth_bits, to_integer(precision) }, { :depth_mode, to_integer(mode) }|opts])
     def create([cmd, precision|args], opts) when cmd in ["-db", "--depth-bits"], do: create(args, [{ :depth_bits, to_integer(precision) }|opts])
-    def create([cmd, mode|args], opts) when cmd in ["-dm", "--depth-mode"], do: create(args, [{ :depth_mode, to_integer(mode) }|opts])
+    def create([cmd, mode|args], opts) when cmd in ["-dm", "--depth-mode"], do: create(args, [{ :depth_mode, to_integer_list(mode) }|opts])
     def create([cmd, width, height, depth|args], opts) when cmd in ["-s", "--size"], do: create(args, [{ :size, { to_integer(width), to_integer(height), to_integer(depth) } }|opts])
     def create([cmd, shared|args], opts) when cmd in ["-sp", "--shared-palette"], do: create(args, [{ :shared_palette, to_boolean(shared) }|opts])
     def create([cmd, shared|args], opts) when cmd in ["-sd", "--shared-depth"], do: create(args, [{ :shared_depth, to_boolean(shared) }|opts])
@@ -84,4 +84,6 @@ defmodule PoxTool.CLI do
         { value, _ } = Integer.parse(value)
         value
     end
+
+    defp to_integer_list(value), do: value |> String.split(",") |> Enum.map(&to_integer/1)
 end
