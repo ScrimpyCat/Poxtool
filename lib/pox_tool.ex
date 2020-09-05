@@ -255,9 +255,13 @@ defmodule PoxTool do
     defp max_segments([{ _, { _, segments, _, _ } }|faces], max), do: max_segments(faces, max(max, segments))
     defp max_segments([], max), do: max
 
-    defp max_palettes(faces, merged \\ %{})
-    defp max_palettes([{ _, { palette, _, _, _ } }|faces], merged), do: max_palettes(faces, Map.merge(merged, palette))
-    defp max_palettes([], merged), do: map_size(merged)
+    defp max_palettes(faces, max \\ 0)
+    defp max_palettes([{ _, { palette, _, _, _ } }|faces], max), do: max_palettes(faces, map_size(palette))
+    defp max_palettes([], max), do: max
+
+    defp max_shared_palettes(faces, merged \\ %{})
+    defp max_shared_palettes([{ _, { palette, _, _, _ } }|faces], merged), do: max_shared_palettes(faces, Map.merge(merged, palette))
+    defp max_shared_palettes([], merged), do: map_size(merged)
 
     defp exceeds_palette_limit?([{ _, { palette, _, _, _ } }|_]) when map_size(palette) > 256, do: true
     defp exceeds_palette_limit?([_|faces]), do: exceeds_palette_limit?(faces)
