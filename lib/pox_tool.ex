@@ -267,7 +267,6 @@ defmodule PoxTool do
     defp exceeds_palette_limit?([_|faces]), do: exceeds_palette_limit?(faces)
     defp exceeds_palette_limit?([]), do: false
 
-    defp exceeds_depth_limit?(faces, bits, nil), do: Enum.all?(0..7, &exceeds_depth_limit?(faces, bits, &1))
     defp exceeds_depth_limit?([{ _, { _, segments, depth, _ } }|faces], 32, 0) when (segments <= 1) and (depth <= 0xffffff), do: exceeds_depth_limit?(faces, 32, 0)
     defp exceeds_depth_limit?([{ _, { _, segments, depth, _ } }|faces], 32, 1) when (segments <= 3) and (depth <= 90), do: exceeds_depth_limit?(faces, 32, 1)
     defp exceeds_depth_limit?([{ _, { _, segments, depth, _ } }|faces], 32, 2) when (segments <= 24) and (depth <= 24), do: exceeds_depth_limit?(faces, 32, 2)
@@ -277,5 +276,7 @@ defmodule PoxTool do
     defp exceeds_depth_limit?([], _, _), do: false
     defp exceeds_depth_limit?(faces, bits, mode) when mode in [3, 4, 5], do: exceeds_depth_limit?(faces, bits, mode - 3)
     defp exceeds_depth_limit?(_, _, mode) when mode in [6, 7], do: false
+    defp exceeds_depth_limit?(faces, bits, nil), do: exceeds_depth_limit?(faces, bits, Enum.to_list(0..7))
+    defp exceeds_depth_limit?(faces, bits, modes) when is_list(modes), do: Enum.all?(modes, &exceeds_depth_limit?(faces, bits, &1))
     defp exceeds_depth_limit?(_, _, _), do: true
 end
