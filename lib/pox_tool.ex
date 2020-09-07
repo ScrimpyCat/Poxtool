@@ -221,6 +221,44 @@ defmodule PoxTool do
     end
     defp pack_pixel(palette, pixels, { [_|modes], bits }, size), do: pack_pixel(palette, pixels, { modes, bits }, size)
 
+    @spec create(PoxTool.Poxel.t, String.t, keyword) :: :ok
+    def create(poxel, path, opts) do
+        depth_bits = opts[:depth_bits] || 32 # 128
+        depth_mode = opts[:depth_mode]
+
+        faces = Map.from_struct(poxel) |> Enum.map(fn { name, face } -> { name, prepare_face(face) } end)
+        max_sp = max_shared_palettes(faces)
+        palette_limit = exceeds_palette_limit?(faces)
+        size = PoxTool.Poxel.size(poxel)
+        cond do
+            opts[:palette] == true and palette_limit -> { :error, "Exceeds maximum palette limit of 256" }
+            opts[:shared_palette] == true and max_sp > 256 -> { :error, "Exceeds maximum palette limit of 256" }
+            not is_nil(opts[:size]) and opts[:size] != size -> { :error, "Does not match size" }
+            exceeds_depth_limit?(faces, depth_bits, depth_mode) -> { :error, "Exceeds depth limit" }
+            true ->
+                option = %PoxTool.Options{
+                    depth: { depth_mode || [0, 1, 2, 3, 4, 5, 6, 7], depth_bits }
+                }
+
+                { palettes, options } = if opts[:shared_palette] do
+                    palette = PoxTool.Poxel.palette(poxel)
+                    size = palette_size(palette)
+                    { { palette, size }, [{ :palette, palette }|PoxTool.all_faces(%{ option | palette: size })] }
+                else
+                    { palettes, options } = Enum.reduce(Map.from_struct(poxel), { [], [] }, fn { name, face }, { acc_p, acc_o } ->
+                        palette = PoxTool.Poxel.face_palette(face)
+                        size = palette_size(palette)
+                        { [{ name, { palette, size } }|acc_p], [{ name, %{ option | palette: size } }|acc_o] }
+                    end)
+                end
+
+                packed = PoxTool.pack(poxel, options)
+                PoxTool.save(packed, size, path, palettes)
+
+                :ok
+        end
+    end
+
     def prepare_face(face, palette \\ %{}) do
         { palette, max_blocks, max_depth, row, rows, _ } = PoxTool.Poxel.face_map(face, { palette, 0, 0, [], [], 0 }, fn
             acc = { _, _, _, _, _, 0 } -> acc
