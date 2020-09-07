@@ -241,6 +241,14 @@ defmodule PoxTool do
         { palette, max_blocks, max_depth, Enum.reverse([Enum.reverse(row)|rows]) }
     end
 
+    defp palette_size(palette) do
+        case map_size(palette) do
+            v when v <= 4 -> 4
+            v when v <= 16 -> 16
+            v when v <= 256 -> 256
+        end
+    end
+
     defp get_palette(poxel, face, shared, palette \\ nil)
     defp get_palette(poxel, face, _, nil), do: PoxTool.Poxel.prepare_face(poxel[face])
     defp get_palette(poxel, face, false, _), do: PoxTool.Poxel.prepare_face(poxel[face])
