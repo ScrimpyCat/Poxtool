@@ -292,7 +292,7 @@ defmodule PoxTool do
     defp max_segments([], max), do: max
 
     defp max_palettes(faces, max \\ 0)
-    defp max_palettes([{ _, { palette, _, _, _ } }|faces], max), do: max_palettes(faces, map_size(palette))
+    defp max_palettes([{ _, { palette, _, _, _ } }|faces], _), do: max_palettes(faces, map_size(palette))
     defp max_palettes([], max), do: max
 
     defp max_shared_palettes(faces, merged \\ %{})
