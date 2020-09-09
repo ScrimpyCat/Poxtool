@@ -287,16 +287,6 @@ defmodule PoxTool do
         end
     end
 
-    defp get_palette(poxel, face, shared, palette \\ nil)
-    defp get_palette(poxel, face, _, nil), do: PoxTool.Poxel.prepare_face(poxel[face])
-    defp get_palette(poxel, face, false, _), do: PoxTool.Poxel.prepare_face(poxel[face])
-    defp get_palette(poxel, face, _, palette) do
-        case PoxTool.Poxel.prepare_face(poxel[face], palette) do
-            palette when map_size(palette) <= 256 -> palette
-            _ -> PoxTool.Poxel.prepare_face(poxel[face])
-        end
-    end
-
     defp max_segments(faces, max \\ 0)
     defp max_segments([{ _, { _, segments, _, _ } }|faces], max), do: max_segments(faces, max(max, segments))
     defp max_segments([], max), do: max
