@@ -1,13 +1,14 @@
 defmodule PoxTool.Voxel do
-    @spec to_poxel(Vox.Data.t) :: PoxTool.Poxel.t
-    def to_poxel(voxel) do
+    @spec to_poxel(Vox.Data.t, keyword) :: PoxTool.Poxel.t
+    def to_poxel(voxel, opts \\ []) do
+        model = opts[:model] || 0
         %PoxTool.Poxel{
-            front: Vox.transform(voxel, :left, :top, :front) |> Vox.model(0) |> get_face,
-            back: Vox.transform(voxel, :right, :top, :back) |> Vox.model(0) |> get_face,
-            left: Vox.transform(voxel, :back, :top, :left) |> Vox.model(0) |> get_face,
-            right: Vox.transform(voxel, :front, :top, :right) |> Vox.model(0) |> get_face,
-            bottom: Vox.transform(voxel, :left, :front, :bottom) |> Vox.model(0) |> get_face,
-            top: Vox.transform(voxel, :left, :back, :top) |> Vox.model(0) |> get_face
+            front: Vox.transform(voxel, :left, :top, :front) |> Vox.model(model) |> get_face,
+            back: Vox.transform(voxel, :right, :top, :back) |> Vox.model(model) |> get_face,
+            left: Vox.transform(voxel, :back, :top, :left) |> Vox.model(model) |> get_face,
+            right: Vox.transform(voxel, :front, :top, :right) |> Vox.model(model) |> get_face,
+            bottom: Vox.transform(voxel, :left, :front, :bottom) |> Vox.model(model) |> get_face,
+            top: Vox.transform(voxel, :left, :back, :top) |> Vox.model(model) |> get_face
         }
     end
 

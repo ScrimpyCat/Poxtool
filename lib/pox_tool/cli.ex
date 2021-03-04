@@ -31,6 +31,7 @@ defmodule PoxTool.CLI do
 
     def create(args, opts \\ [])
     def create([cmd, file|args], opts) when cmd in ["-v", "--voxel"], do: create(args, [{ :source, { :voxel, file } }|opts])
+    def create([cmd, model|args], opts) when cmd in ["-m", "--model"], do: create(args, [{ :model, to_integer(model) }|opts])
     def create([cmd, precision, mode|args], opts) when cmd in ["-d", "--depth"], do: create(args, [{ :depth_bits, to_integer(precision) }, { :depth_mode, to_integer(mode) }|opts])
     def create([cmd, precision|args], opts) when cmd in ["-db", "--depth-bits"], do: create(args, [{ :depth_bits, to_integer(precision) }|opts])
     def create([cmd, mode|args], opts) when cmd in ["-dm", "--depth-mode"], do: create(args, [{ :depth_mode, to_integer_list(mode) }|opts])
@@ -46,7 +47,7 @@ defmodule PoxTool.CLI do
                 |> File.read!
                 |> Vox.new
                 |> Vox.transform(:left, :bottom, :front)
-                |> PoxTool.Voxel.to_poxel
+                |> PoxTool.Voxel.to_poxel(opts)
             nil ->
                 { w, h, d } = opts[:size] || { 64, 64, 64 }
                 face_front = Enum.map(1..h, fn _ -> Enum.map(1..w, fn _ -> [{ { 1, nil }, { 0.0, 0.0, 0.0, 1.0 }, :diffuse }] end) end)
